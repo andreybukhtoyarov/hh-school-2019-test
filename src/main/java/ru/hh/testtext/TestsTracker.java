@@ -32,9 +32,15 @@ public class TestsTracker {
         setTests.add(tests.new WhenTextIsOneWord());
         setTests.add(tests.new WhenTextIsSeveralWord());
         setTests.add(tests.new WhenEmptyTextThen());
+        setTests.add(tests.new WhenTextStartWithExclamationMark());
+        setTests.add(tests.new WhenTextWithOROperator());
+        setTests.add(tests.new WhenTextWithNOTOperator());
+        setTests.add(tests.new WhenTextWithSeveralConditions());
+        setTests.add(tests.new WhenTextWithSearchByFields());
         setTests.add(tests.new WhenTextSize256Chars());
         setTests.add(tests.new WhenTextSize512Chars());
         setTests.add(tests.new WhenTextSize1024Chars());
+        setTests.add(tests.new WhenTextSize32768Chars());
         setTests.add(tests.new WhenTextIsNull());
         setTests.add(tests.new WhenTextIsNULL());
         setTests.add(tests.new WhenTextIsISNULL());

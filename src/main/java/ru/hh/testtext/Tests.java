@@ -59,11 +59,15 @@ public class Tests {
      */
     private void execute(String request, String testName) throws Exception {
         HttpResponse<String> response = sendGet(String.format("https://api.hh.ru/vacancies?text=%s", request));
-        JSONObject parse = (JSONObject) new JSONParser().parse(response.body());
+        JSONObject parse;
+        Object found = null;
+        if (response.statusCode() == 200) {
+            parse = (JSONObject) new JSONParser().parse(response.body());
+            found = parse.get("found");
+        }
         writer.write(String.format("Тест: %s\n", testName));
         writer.write(String.format("URI = \"%s\"\n", response.uri()));
         writer.write(String.format("Status code = %s\n", response.statusCode()));
-        Object found = parse.get("found");
         if (found != null) {
             writer.write(String.format("Найдено вакансий: %s\n", found.toString()));
         } else {
@@ -85,6 +89,48 @@ public class Tests {
         @Override
         public void test() throws Exception {
             execute("java%20developer%20team%20Moscow", "WhenTextIsSeveralWord");
+        }
+    }
+
+    class WhenTextStartWithExclamationMark implements Test {
+
+        @Override
+        public void test() throws Exception {
+            execute("!java", "WhenTextStartWithExclamationMark");
+        }
+    }
+
+    class WhenTextWithOROperator implements Test {
+
+        @Override
+        public void test() throws Exception {
+            execute("java%20OR%20c++", "WhenTextWithOROperator");
+        }
+    }
+
+    class WhenTextWithNOTOperator implements Test {
+
+        @Override
+        public void test() throws Exception {
+            execute("java%20NOT%20c++", "WhenTextWithNOTOperator");
+        }
+    }
+
+    class WhenTextWithSeveralConditions implements Test {
+
+        @Override
+        public void test() throws Exception {
+            execute("%28java%20OR%20c++%29%20AND%20%28python%20OR%20c++%29",
+                    "WhenTextWithSeveralConditions");
+        }
+    }
+
+    class WhenTextWithSearchByFields implements Test {
+
+        @Override
+        public void test() throws Exception {
+            execute("NAME%3A%28python+OR+java%29+and+COMPANY_NAME%3AHeadhunter",
+                    "WhenTextWithSearchByFields");
         }
     }
 
@@ -129,6 +175,18 @@ public class Tests {
                 sb.append("ц");
             }
             execute(sb.toString(), "WhenTextSize1024Chars");
+        }
+    }
+
+    class WhenTextSize32768Chars implements Test {
+
+        @Override
+        public void test() throws Exception {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 1024 * 32; ++i) {
+                sb.append("ц");
+            }
+            execute(sb.toString(), "WhenTextSize32768Chars");
         }
     }
 
